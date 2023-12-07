@@ -20,10 +20,6 @@ export default function Login({ saveUserData }) {
   const clickHandler = () => {
     setShowPass(!showPass);
   };
-<<<<<<< HEAD
-
-=======
->>>>>>> a44c62afcdb79501e9e3a428bd3054f7725d3e56
   // *************preloader*******************
   const [showLoading, setShowLoading] = useState(false);
   const navigate = useNavigate();
@@ -39,14 +35,8 @@ export default function Login({ saveUserData }) {
     axios
       .post(`${baseUrl}/Users/Login`, data)
       .then((response) => {
-<<<<<<< HEAD
         localStorage.setItem("userToken", response.data.token);
         saveUserData();
-=======
-        localStorage.setItem("adminToken", response.data.token);
-        saveAdminData();
-        
->>>>>>> a44c62afcdb79501e9e3a428bd3054f7725d3e56
         setShowLoading(false);
         navigate("/dashboard"); //to home screen
         getToastValue(
@@ -149,12 +139,9 @@ export default function Login({ saveUserData }) {
                 </Link>
               </div>
               <div className="form-group my-3">
-<<<<<<< HEAD
+
                 <button className="btn btn-success w-100">Login</button>
-=======
-                <button
-               className="btn btn-success w-100">Login</button>
->>>>>>> a44c62afcdb79501e9e3a428bd3054f7725d3e56
+
               </div>
             </form>
           </div>
