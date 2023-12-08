@@ -19,7 +19,7 @@ export default function FavoritesList() {
         headers: requestHeaders,
       })
       .then((response) => {
-        console.log("favlist",favList);
+        console.log("favlist", favList);
         setFavList(response.data.data);
       })
       .catch((error) => {
@@ -27,27 +27,30 @@ export default function FavoritesList() {
       });
   };
   // ************to remove from fav*********
-  const removeFavorite=()=>{
+  const removeFavorite = (favId) => {
     axios
-    .delete(`${baseUrl}/userRecipe/${itemId}`, {
-      headers: requestHeaders,
-    })
-    .then((response) => {
-      console.log("removefromfavlist success",response);
-      setFavList(response.data.data);
-      setItemId(itemId);
-      getAllFavorites(); 
-      getToastValue("success",response?.data?.message || "removed from favorites successfully")
-    })
-    .catch((error) => {
-      console.log(error.data);
-      getToastValue(
-        "error",
-        error?.response?.data?.message ||
-          "An error occurred. Please try again."
-      );
-    });
-  }
+      .delete(`${baseUrl}/userRecipe/${favId}`, {
+        headers: requestHeaders,
+      })
+      .then((response) => {
+        console.log("removefromfavlist success", response);
+        setFavList(response.data.data);
+        setItemId(itemId);
+        getAllFavorites();
+        getToastValue(
+          "success",
+          response?.data?.message || "removed from favorites successfully"
+        );
+      })
+      .catch((error) => {
+        console.log(error.data);
+        getToastValue(
+          "error",
+          error?.response?.data?.message ||
+            "An error occurred. Please try again."
+        );
+      });
+  };
   useEffect(() => {
     getAllFavorites();
   }, []);
@@ -57,9 +60,7 @@ export default function FavoritesList() {
         <div className="header-content text-white rounded">
           <div className="row align-items-center  mx-2 px-3">
             <div className="col-md-9">
-              <h3 className="px-4">
-              Favorites items
-              </h3>
+              <h3 className="px-4">Favorites items</h3>
               <p className="w-75 px-4">
                 This is a welcoming screen for the entry of the application ,
                 you can now see the options
@@ -76,9 +77,7 @@ export default function FavoritesList() {
       <div className="row home-sec  rounded-2 m-4 p-4 align-items-center">
         <div className="col-md-6">
           <div>
-            <h4>
-            Show the Favorites !
-            </h4>
+            <h4>Show the Favorites !</h4>
             <p>
               you can now fill the meals easily using the table and form , click
               here and sill it with the table !
@@ -87,36 +86,34 @@ export default function FavoritesList() {
         </div>
         <div className="row mx-4 p-3 text-center">
           {favList?.map((fav) => (
-            
             <div key={fav?.id} className="col-md-3 border rounded m-1">
               <div>
-                {fav?.recipe?.imagePath ?
-                (
-                  <img className="w-75 mb-2" src={`https://upskilling-egypt.com/${fav?.recipe?.imagePath}`}/>
-                )
-                :
-                (<img className="w-75 h-25 mb-2" src={recipeAlt}/>)}
-                
+                {fav?.recipe?.imagePath ? (
+                  <div className="h-25">
+                    <img
+                      className="w-75 mb-2"
+                      src={`https://upskilling-egypt.com/${fav?.recipe?.imagePath}`}
+                    />
+                  </div>
+                ) : (
+                  <img className="w-75  mb-2" src={recipeAlt} />
+                )}
+
+                <p>Name : {fav?.recipe?.name}</p>
                 <p>Description : {fav?.recipe?.description}</p>
                 <p>price : {fav?.recipe?.price}</p>
-                <p>Remove from favourite <br/><i onClick={()=>removeFavorite(itemId)} className="fa fa-heart text-danger"></i></p>
+                <p>
+                  Remove from favourite <br />
+                  <i
+                    onClick={() => removeFavorite(fav.id)}
+                    className="fa fa-heart text-danger"
+                  ></i>
+                </p>
               </div>
             </div>
           ))}
-
-
         </div>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-

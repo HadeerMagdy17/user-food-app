@@ -19,6 +19,8 @@ export default function RecipesList() {
   const { getToastValue } = useContext(ToastContext);
   // *************preloader*******************
   const [showLoading, setShowLoading] = useState(false);
+  // ************load for button******
+  const [load, setLoad] = useState(false);
   // ***********pagination***************
   const [pagesArray, setPagesArray] = useState([]);
   //  ***************************************
@@ -160,6 +162,7 @@ export default function RecipesList() {
   };
   // ************add to fav***************
   const addToFavorites = () => {
+    setLoad(true);
     axios
       .post(
         `${baseUrl}/userRecipe/`,
@@ -168,6 +171,7 @@ export default function RecipesList() {
       )
       .then((response) => {
         console.log("fav tmam", response);
+        setLoad(false);
         getToastValue("success",response?.data?.message || "Added to favorites")
         handleClose();
       })
@@ -241,6 +245,7 @@ export default function RecipesList() {
             <div className="text-end my-3">
               <button
                 onClick={addToFavorites}
+                disabled={load}
                 className="btn btn-outline-warning"
               >
                 Add to favorites
