@@ -11,7 +11,7 @@ export default function Home() {
         <div className="header-content text-white rounded">
           <div className="row align-items-center  mx-2 px-3">
             <div className="col-md-9">
-              <h3 className="px-4"><strong>Welcome {userData?.userName} !</strong></h3>
+              <h3 className="px-4">Welcome {userData?.userName} !</h3>
               <p className="w-75 px-4">
                 This is a welcoming screen for the entry of the application ,
                 you can now see the options
@@ -28,7 +28,7 @@ export default function Home() {
       <div className="row home-sec  rounded-2 m-4 p-4 align-items-center">
         <div className="col-md-6">
           <div>
-            <h4><strong>Show the Recipes !</strong> </h4>
+            <h4>Show the Recipes ! </h4>
             <p>
               you can now fill the meals easily using the table and form , click
               here and sill it with the table !

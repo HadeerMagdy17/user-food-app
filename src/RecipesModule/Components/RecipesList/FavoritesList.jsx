@@ -4,10 +4,15 @@ import headerImg from "../../../assets/images/head1.png";
 import { AuthContext } from "../../../Context/AuthContext";
 import axios from "axios";
 import recipeAlt from "../../../assets/images/recipe.png";
+import { ToastContext } from "../../../Context/ToastContext";
 export default function FavoritesList() {
-  const [favList, setFavList] = useState([]);
+  // ***************context******************
+  const { getToastValue } = useContext(ToastContext);
   const { baseUrl, requestHeaders } = useContext(AuthContext);
-
+  // ************usestate******************
+  const [favList, setFavList] = useState([]);
+  let [itemId, setItemId] = useState(0);
+  // ************get all fav***************
   const getAllFavorites = () => {
     axios
       .get(`${baseUrl}/userRecipe/`, {
@@ -21,6 +26,28 @@ export default function FavoritesList() {
         console.log(error.data);
       });
   };
+  // ************to remove from fav*********
+  const removeFavorite=()=>{
+    axios
+    .delete(`${baseUrl}/userRecipe/${itemId}`, {
+      headers: requestHeaders,
+    })
+    .then((response) => {
+      console.log("removefromfavlist success",response);
+      setFavList(response.data.data);
+      setItemId(itemId);
+      getAllFavorites(); 
+      getToastValue("success",response?.data?.message || "removed from favorites successfully")
+    })
+    .catch((error) => {
+      console.log(error.data);
+      getToastValue(
+        "error",
+        error?.response?.data?.message ||
+          "An error occurred. Please try again."
+      );
+    });
+  }
   useEffect(() => {
     getAllFavorites();
   }, []);
@@ -31,7 +58,7 @@ export default function FavoritesList() {
           <div className="row align-items-center  mx-2 px-3">
             <div className="col-md-9">
               <h3 className="px-4">
-                <strong>Favorites items</strong>
+              Favorites items
               </h3>
               <p className="w-75 px-4">
                 This is a welcoming screen for the entry of the application ,
@@ -50,7 +77,7 @@ export default function FavoritesList() {
         <div className="col-md-6">
           <div>
             <h4>
-              <strong>Show the Favorites !</strong>{" "}
+            Show the Favorites !
             </h4>
             <p>
               you can now fill the meals easily using the table and form , click
@@ -59,18 +86,20 @@ export default function FavoritesList() {
           </div>
         </div>
         <div className="row mx-4 p-3 text-center">
-          {favList.map((fav) => (
+          {favList?.map((fav) => (
             
             <div key={fav?.id} className="col-md-3 border rounded m-1">
               <div>
                 {fav?.recipe?.imagePath ?
-                (<img className="img-fluid" src={`https://upskilling-egypt.com`+ fav?.recipe?.imagePath}/>)
-                // <img src={`http://upskilling-egypt.com/+${recipe.imagePath}`}
+                (
+                  <img className="w-75 mb-2" src={`https://upskilling-egypt.com/${fav?.recipe?.imagePath}`}/>
+                )
                 :
-                (<img className="img-fluid" src={recipeAlt}/>)}
+                (<img className="w-75 h-25 mb-2" src={recipeAlt}/>)}
                 
-                <p>description:{fav?.recipe?.description}</p>
-                <p>price:{fav?.recipe?.price}</p>
+                <p>Description : {fav?.recipe?.description}</p>
+                <p>price : {fav?.recipe?.price}</p>
+                <p>Remove from favourite <br/><i onClick={()=>removeFavorite(itemId)} className="fa fa-heart text-danger"></i></p>
               </div>
             </div>
           ))}

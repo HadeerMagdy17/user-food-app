@@ -35,15 +35,8 @@ export default function RecipesList() {
   // **********to use more than one modal in same component**********
   const [modalState, setModalState] = useState("close");
 
-  // **********image preview**********
-  // function handleImgChange(e) {
-  //   console.log(e.target.files);
-  //   setFile(URL.createObjectURL(e.target.files[0]));
-  // }
-
   // ********to show view modal*******************
   const showViewModal = (id) => {
-
     setItemId(id);
     setModalState("view-modal");
     getRecipeDetails(id);
@@ -98,8 +91,8 @@ export default function RecipesList() {
         headers: requestHeaders,
       })
       .then((response) => {
-        console.log("setrecdetail",response);
-        setRecipeDetails(response?.data?.data);
+        console.log("setrecdetail", response?.data);
+        setRecipeDetails(response?.data);
 
         setShowLoading(false);
       })
@@ -131,7 +124,7 @@ export default function RecipesList() {
       })
       .then((response) => {
         // console.log("all recipe img path",response?.data?.data[3].imagePath);
-        console.log("reclist",response?.data?.data);
+        console.log("reclist", response?.data?.data);
         setRecipesList(response?.data?.data);
         setPagesArray(
           Array(response?.data?.totalNumberOfPages)
@@ -165,6 +158,7 @@ export default function RecipesList() {
     setSelectedCategoryId(e.target.value);
     getAllRecipes(1, searchString, selectedTagId, e.target.value);
   };
+  // ************add to fav***************
   const addToFavorites = () => {
     axios
       .post(
@@ -173,10 +167,14 @@ export default function RecipesList() {
         { headers: requestHeaders }
       )
       .then((response) => {
-        console.log("fav tmam",response);
+        console.log("fav tmam", response);
+        getToastValue("success",response?.data?.message || "Added to favorites")
+        handleClose();
       })
       .catch((error) => {
         console.log(error);
+        getToastValue("error", error?.response?.data?.message ||
+        "An error occurred. Please try again.")
       });
   };
   useEffect(() => {
@@ -194,7 +192,7 @@ export default function RecipesList() {
           <div className="row align-items-center  m-2 p-3">
             <div className="col-md-10">
               <h3 className="px-4">
-                <strong>Recipes Items</strong>
+               Recipes Items
               </h3>
               <p className="w-75 px-4">
                 You can now add your items that any user can order it from the
@@ -212,7 +210,7 @@ export default function RecipesList() {
       <div className="row justify-content-between mx-4 p-3 ">
         <div className="col-md-6 px-4">
           <h4>
-            <strong>Recipes Table Details</strong>
+            Recipes Table Details
           </h4>
           <p>You can check all details</p>
         </div>
@@ -223,21 +221,22 @@ export default function RecipesList() {
             <h3>Recipe Details</h3>
           </Modal.Header>
           <Modal.Body>
-          
             <div className="text-center">
               {recipeDetails?.imagePath ? (
-                // <img
-                //   src={
-                //     `https://upskilling-egypt.com` + recipeDetails?.imagePath
-                //   }
-                <img src={`http://upskilling-egypt.com/+${recipeDetails?.imagePath}`}
+                <img className="w-25"
+                  src={`https://upskilling-egypt.com/${recipeDetails?.imagePath}`}
                 />
               ) : (
-                <img src={noData} />
+                <img className="w-50" src={noData} />
               )}
-              <p>description:
-                 {recipeDetails?.description}
-                 </p>
+               <p>
+                Name:
+                {recipeDetails?.name}
+              </p>
+              <p>
+                description:
+                {recipeDetails?.description}
+              </p>
             </div>
             <div className="text-end my-3">
               <button
@@ -249,7 +248,7 @@ export default function RecipesList() {
             </div>
           </Modal.Body>
         </Modal>
-        {/* //*****************update modal******************** */}
+        {/* //*****************view modal******************** */}
         {/* ****************start filtration********************** */}
         <div className="filtration-group my-3">
           <div className="row">
@@ -329,10 +328,10 @@ export default function RecipesList() {
                         {recipe?.imagePath ? (
                           <img
                             className="w-100"
-                            src=
-                            {  `https://upskilling-egypt.com:443/` +
-                              recipe?.imagePath}
-                            
+                            src={
+                              `https://upskilling-egypt.com:443/` +
+                              recipe?.imagePath
+                            }
                           />
                         ) : (
                           <img className="w-100" src={recipeAlt} />
@@ -346,7 +345,7 @@ export default function RecipesList() {
                     <td>
                       <i
                         onClick={() => showViewModal(recipe.id)}
-                          // showViewModal(recipe.id)}
+                      
                         className="fa fa-eye  text-success px-2"
                       ></i>
                     </td>
