@@ -20,10 +20,10 @@ export default function FavoritesList() {
       })
       .then((response) => {
         console.log("favlist", favList);
-        setFavList(response.data.data);
+        setFavList(response?.data?.data);
       })
       .catch((error) => {
-        console.log(error.data);
+        console.log(error?.data?.data);
       });
   };
   // ************to remove from fav*********

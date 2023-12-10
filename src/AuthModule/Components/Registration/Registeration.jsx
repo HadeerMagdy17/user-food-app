@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useCallback,useState } from "react";
 import logo from "../../../assets/images/4.png";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { GoogleLoginButton,FacebookLoginButton } from "react-social-login-buttons";
+import { LoginSocialGoogle,LoginSocialFacebook } from "reactjs-social-login";
 import { useNavigate, Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import Form from "react-bootstrap/Form";
@@ -11,9 +13,12 @@ import { AuthContext } from "../../../Context/AuthContext";
 import { useContext } from "react";
 import { ToastContext } from "../../../Context/ToastContext";
 
+// *******social login*************
+const REDIRECT_URI = window.location.href;
+
 export default function Registeration() {
   // *************context***************
-  const { baseUrl} = useContext(AuthContext);
+  const { baseUrl } = useContext(AuthContext);
   const { getToastValue } = useContext(ToastContext);
   // *************preloader*******************
   const [showLoading, setShowLoading] = useState(false);
@@ -22,6 +27,19 @@ export default function Registeration() {
   const clickHandler = () => {
     setShowPass(!showPass);
   };
+  // ***************social logins***********************
+  const [provider, setProvider] = useState('')
+  const [profile, setProfile] = useState(null)
+
+  const onLoginStart = useCallback(() => {
+    alert('login start')
+  }, [])
+
+  const onLogoutSuccess = useCallback(() => {
+    setProfile(null)
+    setProvider('')
+    alert('logout success')
+  }, [])
   //   **********to navigate to another page***************
   const navigate = useNavigate();
   // ************validate***************
@@ -32,14 +50,13 @@ export default function Registeration() {
   } = useForm();
   //****************to register******************
   const onSubmit = (data) => {
-    console.log(data)
-   setShowLoading(true);
+    console.log(data);
+    setShowLoading(true);
     axios
       .post(`${baseUrl}/Users/Register`, data)
       .then((response) => {
-       
         setShowLoading(false);
-        navigate("/verify-account"); 
+        navigate("/verify-account");
         getToastValue(
           "success",
           response?.data?.message || "Register successfully"
@@ -52,7 +69,7 @@ export default function Registeration() {
             "An error occurred. Please try again."
         );
         setShowLoading(false);
-      }); 
+      });
   };
   return showLoading ? (
     <PreLoader />
@@ -123,7 +140,7 @@ export default function Registeration() {
                 <div className="col-md-6">
                   <InputGroup className="mb-3">
                     <InputGroup.Text>
-                    <i className="fa-solid fa-house-user"></i>
+                      <i className="fa-solid fa-house-user"></i>
                     </InputGroup.Text>
                     <Form.Control
                       placeholder="country"
@@ -158,11 +175,12 @@ export default function Registeration() {
                         })}
                       />
                     </InputGroup>
-                    {errors.phoneNumber && errors.phoneNumber.type === "required" && (
-                      <span className="text-danger my-1">
-                        phoneNumber is required
-                      </span>
-                    )}
+                    {errors.phoneNumber &&
+                      errors.phoneNumber.type === "required" && (
+                        <span className="text-danger my-1">
+                          phoneNumber is required
+                        </span>
+                      )}
                     {/*//phone input*/}
                   </div>
                 </div>
@@ -202,10 +220,9 @@ export default function Registeration() {
                 </div>
                 <div className="col-md-6">
                   <div>
-                    
                     {/* confirmpassword input */}
                     <InputGroup className="mb-3">
-                      <InputGroup.Text >
+                      <InputGroup.Text>
                         <i className="fa-solid fa-key"></i>
                       </InputGroup.Text>
                       <Form.Control
@@ -227,22 +244,48 @@ export default function Registeration() {
                         )}
                       </InputGroup.Text>
                     </InputGroup>
-                    {errors.confirmPassword && errors.confirmPassword.type === "required" && (
-                      <span className="text-danger my-1">
-                        confirmPassword is required
-                      </span>
-                    )}
+                    {errors.confirmPassword &&
+                      errors.confirmPassword.type === "required" && (
+                        <span className="text-danger my-1">
+                          confirmPassword is required
+                        </span>
+                      )}
                     {/*//confirm password input*/}
                   </div>
                 </div>
+                <LoginSocialGoogle
+                  isOnlyGetToken
+                  client_id="1033252759652-i3p3mk2v19jr0l3rtpl4mbah169f5kga.apps.googleusercontent.com"
+                  onLoginStart={onLoginStart}
+                  onResolve={({ provider, data }) => {
+                    setProvider(provider);
+                    setProfile(data);
+                  }}
+                  onReject={(err) => {
+                    console.log(err);
+                  }}
+                >
+                  <GoogleLoginButton />
+                </LoginSocialGoogle>
+                <LoginSocialFacebook
+            isOnlyGetToken
+            appId='6413467362090463'
+            onLoginStart={onLoginStart}
+            onResolve={({ provider, data }) => {
+              setProvider(provider)
+              setProfile(data)
+            }}
+            onReject={(err) => {
+              console.log(err)
+            }}
+          >
+            <FacebookLoginButton />
+          </LoginSocialFacebook>
+            
               </div>
 
               <div className="text-end">
-              
-                <Link
-                  to="/login"
-                  className="text-success text-decoration-none"
-                >
+                <Link to="/login" className="text-success text-decoration-none">
                   Login Now !
                 </Link>
               </div>
@@ -256,5 +299,3 @@ export default function Registeration() {
     </div>
   );
 }
-
-
