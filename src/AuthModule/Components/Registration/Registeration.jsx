@@ -32,7 +32,7 @@ export default function Registeration() {
   const [profile, setProfile] = useState(null)
 
   const onLoginStart = useCallback(() => {
-    alert('login start')
+    onSubmit()
   }, [])
 
   const onLogoutSuccess = useCallback(() => {
@@ -255,7 +255,7 @@ export default function Registeration() {
                 </div>
                 <LoginSocialGoogle
                   isOnlyGetToken
-                  client_id="1033252759652-i3p3mk2v19jr0l3rtpl4mbah169f5kga.apps.googleusercontent.com"
+                  client_id="963786451522-1nj4mfpn17plm6vab1djn0afunbcel51.apps.googleusercontent.com"
                   onLoginStart={onLoginStart}
                   onResolve={({ provider, data }) => {
                     setProvider(provider);
