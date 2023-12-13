@@ -120,7 +120,7 @@ const showDeleteModal = (id) => {
             <div className="text-end">
               <button
               type="submit"
-                onClick={removeFavorite}
+                onClick={()=>removeFavorite(itemId)}
                 className={
                   "btn btn-outline-danger my-3" +
                   (showLoading ? " disabled" : "")
