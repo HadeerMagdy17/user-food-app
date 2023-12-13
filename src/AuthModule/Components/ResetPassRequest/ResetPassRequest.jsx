@@ -86,7 +86,18 @@ export default function ResetPassRequest() {
       
 
               <div className="form-group my-3">
-                <button className="btn btn-success w-100">Send</button>
+              <button
+                  type="submit"
+                  className={
+                    "btn btn-success w-100" + (showLoading ? " disabled" : " ")
+                  }
+                >
+                  {showLoading == true ? (
+                    <i className="fas fa-spinner fa-spin"></i>
+                  ) : (
+                    "Send"
+                  )}
+                </button>
               </div>
             </form>
           </div>

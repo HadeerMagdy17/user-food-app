@@ -55,7 +55,7 @@ export default function Login({ saveUserData }) {
   };
 
   return showLoading ? (
-    <PreLoader />
+    <div className="prePosition"> <PreLoader/></div>
   ) : (
     <div className="Auth-container container-fluid">
       <div className="row bg-overlay vh-100 justify-content-center align-items-center">
@@ -140,7 +140,18 @@ export default function Login({ saveUserData }) {
               </div>
               <div className="form-group my-3">
 
-                <button className="btn btn-success w-100">Login</button>
+              <button
+                  type="submit"
+                  className={
+                    "btn btn-success w-100" + (showLoading ? " disabled" : " ")
+                  }
+                >
+                  {showLoading == true ? (
+                    <i className="fas fa-spinner fa-spin"></i>
+                  ) : (
+                    "Login"
+                  )}
+                </button>
 
               </div>
             </form>

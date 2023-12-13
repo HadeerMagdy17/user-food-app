@@ -167,8 +167,17 @@ export default function ChangePass({ handleClose }) {
               {/* //confirm new password */}
 
               <div className="form-group my-3">
-                <button className="btn btn-success w-100">
-                  Change Password
+              <button
+                  type="submit"
+                  className={
+                    "btn btn-success w-100" + (showLoading ? " disabled" : " ")
+                  }
+                >
+                  {showLoading == true ? (
+                    <i className="fas fa-spinner fa-spin"></i>
+                  ) : (
+                    "Change Password"
+                  )}
                 </button>
               </div>
             </form>

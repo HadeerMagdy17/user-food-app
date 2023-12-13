@@ -177,8 +177,17 @@ export default function ResetPass() {
               {/* //confirm password */}
 
               <div className="form-group my-3">
-                <button className="btn btn-success w-100">
-                  Reset Password
+              <button
+                  type="submit"
+                  className={
+                    "btn btn-success w-100" + (showLoading ? " disabled" : " ")
+                  }
+                >
+                  {showLoading == true ? (
+                    <i className="fas fa-spinner fa-spin"></i>
+                  ) : (
+                    "Reset password"
+                  )}
                 </button>
               </div>
             </form>

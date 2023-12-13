@@ -290,7 +290,19 @@ export default function Registeration() {
                 </Link>
               </div>
               <div className="form-group my-3">
-                <button className="btn btn-success w-100">Register</button>
+              
+                <button
+                  type="submit"
+                  className={
+                    "btn btn-success w-100" + (showLoading ? " disabled" : " ")
+                  }
+                >
+                  {showLoading == true ? (
+                    <i className="fas fa-spinner fa-spin"></i>
+                  ) : (
+                    "Register"
+                  )}
+                </button>
               </div>
             </form>
           </div>

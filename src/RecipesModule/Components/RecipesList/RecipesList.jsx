@@ -19,8 +19,7 @@ export default function RecipesList() {
   const { getToastValue } = useContext(ToastContext);
   // *************preloader*******************
   const [showLoading, setShowLoading] = useState(false);
-  // ************load for button******
-  const [load, setLoad] = useState(false);
+
   // ***********pagination***************
   const [pagesArray, setPagesArray] = useState([]);
   //  ***************************************
@@ -43,6 +42,7 @@ export default function RecipesList() {
     setModalState("view-modal");
     getRecipeDetails(id);
   };
+ 
   // ********to close modal*******************
   const handleClose = () => setModalState("close");
 
@@ -87,7 +87,6 @@ export default function RecipesList() {
 
   // ************get recipe details****************
   const getRecipeDetails = (id) => {
-    setShowLoading(true);
     axios
       .get(`${baseUrl}/Recipe/${id}`, {
         headers: requestHeaders,
@@ -96,7 +95,6 @@ export default function RecipesList() {
         console.log("setrecdetail", response?.data);
         setRecipeDetails(response?.data);
 
-        setShowLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -105,7 +103,7 @@ export default function RecipesList() {
           error?.response?.data?.message ||
             "An error occurred. Please try again."
         );
-        setShowLoading(false);
+       
       });
   };
 
@@ -162,7 +160,7 @@ export default function RecipesList() {
   };
   // ************add to fav***************
   const addToFavorites = () => {
-    setLoad(true);
+    setShowLoading(true);
     axios
       .post(
         `${baseUrl}/userRecipe/`,
@@ -171,7 +169,7 @@ export default function RecipesList() {
       )
       .then((response) => {
         console.log("fav tmam", response);
-        setLoad(false);
+        setShowLoading(false);
         getToastValue("success",response?.data?.message || "Added to favorites")
         handleClose();
       })
@@ -187,9 +185,7 @@ export default function RecipesList() {
     getAllRecipes();
   }, []);
 
-  return showLoading ? (
-    <PreLoader />
-  ) : (
+  return  (
     <>
       <Header>
         <div className="header-content text-white rounded">
@@ -243,17 +239,25 @@ export default function RecipesList() {
               </p>
             </div>
             <div className="text-end my-3">
-              <button
+            <button
+            type="submit"
                 onClick={addToFavorites}
-                disabled={load}
-                className="btn btn-outline-warning"
+                className={
+                  "btn btn-outline-success" +
+                  (showLoading ? " disabled" : " ")
+                }
               >
-                Add to favorites
+                {showLoading == true ? (
+                  <i className="fas fa-spinner fa-spin"></i>
+                ) : (
+                  " Add to favorites"
+                )}
               </button>
             </div>
           </Modal.Body>
         </Modal>
         {/* //*****************view modal******************** */}
+             
         {/* ****************start filtration********************** */}
         <div className="filtration-group my-3">
           <div className="row">
@@ -308,7 +312,9 @@ export default function RecipesList() {
             </div>
           </div>
         </div>
-        {recipesList?.length > 0 ? (
+        {!showLoading ? (
+<> 
+  {recipesList?.length > 0 ? (
           <div className="table-responsive">
             <table className="table">
               <thead className="table-head table-success">
@@ -384,6 +390,11 @@ export default function RecipesList() {
         ) : (
           <NoData />
         )}
+        </>
+        ) : (
+          <PreLoader />
+        )}
+
       </div>
     </>
   );

@@ -2,18 +2,33 @@ import React, { useContext, useEffect, useState } from "react";
 import Header from "../../../SharedModule/Components/Header/Header";
 import headerImg from "../../../assets/images/head1.png";
 import { AuthContext } from "../../../Context/AuthContext";
+import noData from "../../../assets/images/nodata.png";
+import Modal from "react-bootstrap/Modal";
 import axios from "axios";
 import recipeAlt from "../../../assets/images/recipe.png";
 import { ToastContext } from "../../../Context/ToastContext";
+import PreLoader from "../../../SharedModule/Components/PreLoader/PreLoader";
 export default function FavoritesList() {
   // ***************context******************
   const { getToastValue } = useContext(ToastContext);
   const { baseUrl, requestHeaders } = useContext(AuthContext);
+   // *************preloader*******************
+   const [showLoading, setShowLoading] = useState(false);
   // ************usestate******************
+  const [modalState, setModalState] = useState("close");
   const [favList, setFavList] = useState([]);
   let [itemId, setItemId] = useState(0);
+// ***************remove fav modal****************
+const showDeleteModal = (id) => {
+  setItemId(id);
+  setModalState("delete-modal");
+};
+ 
+  // ********to close modal*******************
+  const handleClose = () => setModalState("close");
   // ************get all fav***************
   const getAllFavorites = () => {
+    setShowLoading(true);
     axios
       .get(`${baseUrl}/userRecipe/`, {
         headers: requestHeaders,
@@ -21,9 +36,11 @@ export default function FavoritesList() {
       .then((response) => {
         console.log("favlist", favList);
         setFavList(response?.data?.data);
+        setShowLoading(false);
       })
       .catch((error) => {
         console.log(error?.data?.data);
+        setShowLoading(false);
       });
   };
   // ************to remove from fav*********
@@ -43,7 +60,7 @@ export default function FavoritesList() {
         );
       })
       .catch((error) => {
-        console.log(error.data);
+        console.log(error?.response?.data?.message);
         getToastValue(
           "error",
           error?.response?.data?.message ||
@@ -54,7 +71,9 @@ export default function FavoritesList() {
   useEffect(() => {
     getAllFavorites();
   }, []);
-  return (
+  return showLoading ? (
+    <div className="prePosition"> <PreLoader/></div>
+   ) : (
     <div>
       <Header>
         <div className="header-content text-white rounded">
@@ -84,35 +103,78 @@ export default function FavoritesList() {
             </p>
           </div>
         </div>
-        <div className="row mx-4 p-3 text-center">
-          {favList?.map((fav) => (
-            <div key={fav?.id} className="col-md-3 border rounded m-1">
-              <div>
-                {fav?.recipe?.imagePath ? (
-                  <div className="h-25">
-                    <img
-                      className="w-75 mb-2"
-                      src={`https://upskilling-egypt.com/${fav?.recipe?.imagePath}`}
-                    />
-                  </div>
-                ) : (
-                  <img className="w-75  mb-2" src={recipeAlt} />
-                )}
-
-                <p>Name : {fav?.recipe?.name}</p>
-                <p>Description : {fav?.recipe?.description}</p>
-                <p>price : {fav?.recipe?.price}</p>
-                <p>
-                  Remove from favourite <br />
-                  <i
-                    onClick={() => removeFavorite(fav.id)}
-                    className="fa fa-heart text-danger"
-                  ></i>
-                </p>
-              </div>
+      </div>
+         {/* ****************delete modal **************** */}
+         <Modal show={modalState == "delete-modal"} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <h3>delete from favorites?</h3>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-center">
+              <img src={noData} />
+              <p>
+                are you sure you want to delete this item ? if you are sure just
+                click on delete it
+              </p>
             </div>
-          ))}
-        </div>
+            <div className="text-end">
+              <button
+              type="submit"
+                onClick={removeFavorite}
+                className={
+                  "btn btn-outline-danger my-3" +
+                  (showLoading ? " disabled" : "")
+                }
+              >
+                {showLoading == true ? (
+                  <i className="fas fa-spinner fa-spin"></i>
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            </div>
+          </Modal.Body>
+        </Modal>
+        {/* ****************delete modal *****************/}
+      <div className="row mx-4 p-3 text-center">
+       
+            {favList?.map((fav) => (
+              <div key={fav?.id} className="col-md-3  m-1">
+                {/* cards */}
+                <section className="articles">
+                  <article>
+                    <div className="article-wrapper">
+                      <figure>
+                        {fav?.recipe?.imagePath ? (
+                          <div className="h-25">
+                            <img
+                              className="w-75 mb-2"
+                              src={`https://upskilling-egypt.com/${fav?.recipe?.imagePath}`}
+                            />
+                          </div>
+                        ) : (
+                          <img className="w-75  mb-2" src={recipeAlt} />
+                        )}
+                      </figure>
+                      <div className="article-body">
+                        <h2>{fav?.recipe?.name}</h2>
+                        <p>Description : {fav?.recipe?.description}</p>
+                        <p>price : {fav?.recipe?.price}</p>
+                        <p className="my-2">
+                          <i
+                            onClick={() => showDeleteModal(fav.id)}
+                            className="fa fa-trash text-danger"
+                          ></i>
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </section>
+                {/* //cards */}
+              </div>
+            ))}
+          
+     
       </div>
     </div>
   );
