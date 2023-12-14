@@ -39,12 +39,18 @@ const showDeleteModal = (id) => {
         setShowLoading(false);
       })
       .catch((error) => {
-        console.log(error?.data?.data);
+        // console.log(error?.data?.data);
+        getToastValue(
+          "error",
+          error?.response?.data?.message ||
+            "An error occurred. Please try again."
+        );
         setShowLoading(false);
       });
   };
   // ************to remove from fav*********
   const removeFavorite = (favId) => {
+    setShowLoading(true)
     axios
       .delete(`${baseUrl}/userRecipe/${favId}`, {
         headers: requestHeaders,
@@ -53,14 +59,18 @@ const showDeleteModal = (id) => {
         console.log("removefromfavlist success", response);
         setFavList(response.data.data);
         setItemId(itemId);
-        getAllFavorites();
+        handleClose();
         getToastValue(
           "success",
           response?.data?.message || "removed from favorites successfully"
         );
+        setShowLoading(false)
+        getAllFavorites();
+
       })
       .catch((error) => {
         console.log(error?.response?.data?.message);
+        setShowLoading(false)
         getToastValue(
           "error",
           error?.response?.data?.message ||
@@ -71,9 +81,7 @@ const showDeleteModal = (id) => {
   useEffect(() => {
     getAllFavorites();
   }, []);
-  return showLoading ? (
-    <div className="prePosition"> <PreLoader/></div>
-   ) : (
+  return  (
     <div>
       <Header>
         <div className="header-content text-white rounded">
@@ -87,7 +95,7 @@ const showDeleteModal = (id) => {
             </div>
             <div className="col-md-3">
               <div>
-                <img src={headerImg} className="img-fluid" alt="header" />
+                <img src={headerImg} className="headerImg img-fluid" alt="header" />
               </div>
             </div>
           </div>
@@ -137,8 +145,8 @@ const showDeleteModal = (id) => {
         </Modal>
         {/* ****************delete modal *****************/}
       <div className="row mx-4 p-3 text-center">
-       
-            {favList?.map((fav) => (
+       {!showLoading?   <>
+        {favList?.map((fav) => (
               <div key={fav?.id} className="col-md-3  m-1">
                 {/* cards */}
                 <section className="articles">
@@ -173,6 +181,9 @@ const showDeleteModal = (id) => {
                 {/* //cards */}
               </div>
             ))}
+            </>:<PreLoader/>}
+    
+           
           
      
       </div>

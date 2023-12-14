@@ -19,7 +19,7 @@ export default function Home() {
             </div>
             <div className="col-md-3">
               <div>
-                <img src={headerImg} className="img-fluid" alt="header" />
+                <img src={headerImg} className="headerImg img-fluid" alt="header" />
               </div>
             </div>
           </div>
